@@ -1,0 +1,571 @@
+/* Base Variables */
+        :root {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --border: #334155;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container & Layout */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Controls Section */
+        .controls {
+            background: var(--surface);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+
+        .controls-grid {
+            display: flex;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .control-section {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .control-section-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+			margin-top: 10px;
+        }
+
+		#control-display {
+			flex: 2;
+		}
+		
+        /* Main Actions */
+        .main-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Buttons */
+        .button-primary {
+            flex: 1;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .button-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .button-secondary {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .button-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .button-secondary.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Size Inputs */
+        .size-inputs {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .size-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .size-input {
+            width: 80px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            text-align: center;
+        }
+
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+            margin: 0 8px;
+        }
+
+        /* Vision Board Layout */
+        .vision-board-wrapper {
+            position: relative;
+            width: 100%;
+            //height: calc(100vh - 300px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: var(--background);
+            border-radius: 16px;
+            margin-top: 20px;
+			padding: 20px;
+        }
+
+        .vision-board {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            overflow: auto;
+        }
+
+        .vision-board.horizontal {
+            width: 1200px;
+            height: 800px;
+        }
+
+        .vision-board.vertical {
+            width: 800px;
+            height: 1200px;
+        }
+
+		/* עדכון התאמה למסך */
+		.vision-board.fit-screen {
+			transform-origin: center;
+			margin: auto;
+		}
+
+        /* Grid Layout */
+		.board-grid {
+			column-count: 3; /* ברירת מחדל */
+			column-gap: 24px;
+			padding: 24px;
+			height: 100%;
+		}
+
+		/* Column variations */
+		.board-grid.columns-2,
+		.board-grid[data-columns="2"] {
+			column-count: 2;
+		}
+
+		.board-grid.columns-3,
+		.board-grid[data-columns="3"] {
+			column-count: 3;
+		}
+
+		.board-grid.columns-4,
+		.board-grid[data-columns="4"] {
+			column-count: 4;
+		}
+
+		.board-grid .grid-item.resizing {
+		  position: absolute;
+		  z-index: 1000;
+		  grid-column: auto / span 1; /* מבטל את ההגבלה של העמודות */
+		  width: auto; /* מאפשר הגדלה חופשית */
+		  height: auto;
+		}
+
+		.board-grid.has-resizing-item .grid-item {
+		  position: absolute;
+		  transform: translate(var(--item-x), var(--item-y));
+		  transition: none; /* מונע אנימציה בזמן שינוי גודל */
+		}
+		
+		/* כשיש תמונה במצב הגדלה */
+		.board-grid.resizing-active {
+		  grid-template-columns: none !important; /* מבטל את הגריד */
+		}
+
+		.board-grid.resizing-active .grid-item {
+		  position: absolute !important;
+		  left: var(--current-x);
+		  top: var(--current-y);
+		  width: var(--current-width);
+		  height: var(--current-height);
+		}
+
+		/* רק התמונה שמשנים את גודלה תגיב לשינויים */
+		.board-grid .grid-item.resizing {
+		  z-index: 1000;
+		}
+
+		.grid-item.resizing {
+		  position: absolute !important;
+		  z-index: 1000;
+		  grid-row: auto !important;
+		  grid-column: auto !important;
+		}
+		
+		.board-grid.resizing .grid-item:not(.resizing) {
+		  position: absolute !important;
+		  grid-row: auto !important;
+		  grid-column: auto !important;
+		}
+
+		.board-grid.resizing {
+		  display: block !important; /* מבטל את הגריד */
+		  grid-template-columns: none !important;
+		}
+
+		.board-grid.resizing .grid-item,
+		.board-grid .grid-item {  /* גם אחרי שמסיימים resize */
+		  position: absolute !important;
+		  grid-column: unset !important;
+		  grid-row: unset !important;
+		  left: var(--current-x);
+		  top: var(--current-y);
+		}
+
+		/* התמונה שמשנים את גודלה */
+		.board-grid .grid-item.being-resized {
+		  z-index: 1000;
+		}
+
+
+		/* Image container styles */
+		.image-container {
+			break-inside: avoid;
+			margin-bottom: 24px;
+			position: relative;
+			border-radius: 12px;
+			overflow: hidden;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			border: 2px solid var(--border);
+			transition: transform 0.3s ease;
+		}
+
+		.image-container img {
+			width: 100%;
+			height: auto;
+			display: block;
+			border: 3px solid #000000; /* מסגרת ברירת מחדל בצבע שחור */
+			box-sizing: border-box; /* לוודא שהמסגרת לא משפיעה על גודל התמונה */
+			border-radius: 5px; /* ניתן להוסיף גם פינות מעוגלות למסגרת */
+		}
+
+        .image-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .image-container.wide {
+            grid-column: span 2;
+        }
+
+        .image-container.tall {
+            grid-row: span 2;
+        }
+
+        .image-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: filter 0.3s ease;
+        }
+
+        .image-container:hover img {
+            filter: brightness(0.9);
+        }
+
+		.image-container::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0; /* Change from 'right' to 'left' to position on the bottom-left */
+			width: 30px; /* Keep the size of the handle */
+			height: 30px; /* Keep the size of the handle */
+			border-left: 3px solid var(--primary); /* Change to border-left for the left side */
+			border-bottom: 3px solid var(--primary); /* Keep bottom border */
+			opacity: 0; /* Initially hidden */
+			transition: opacity 0.3s ease; /* Smooth transition */
+			cursor: sw-resize; /* Change cursor to bottom-left resize */
+			z-index: 10; /* Ensure it stays on top */
+		}
+				
+		/* Make the handle visible on hover */
+		.image-container:hover::after {
+			opacity: 1;
+		}
+		
+		/* Remove all previous resize handle visibility */
+		.resize-handle {
+			display: none; /* Hide all other handles */
+		}
+
+		/* Make the bottom-left (sw) resize handle visible */
+		.resize-handle.sw {
+			display: block;
+			position: absolute;
+			width: 15px;
+			height: 15px;
+			background-color: var(--primary);
+			border-radius: 50%;
+			bottom: 0; /* Positioned at the bottom */
+			left: 0;   /* Positioned at the left */
+			cursor: sw-resize; /* Correct cursor for bottom-left resizing */
+			opacity: 0; /* Initially hidden */
+			transition: opacity 0.3s ease;
+		}
+
+		/* Ensure the bottom-left handle becomes visible on hover */
+		.image-container:hover .resize-handle.sw {
+			opacity: 1;
+		}
+
+		/* Hide other resize handles to avoid any confusion */
+		.resize-handle.nw,
+		.resize-handle.ne,
+		.resize-handle.se,
+		.resize-handle.top,
+		.resize-handle.bottom,
+		.resize-handle.left,
+		.resize-handle.right {
+			display: none !important;
+		}
+		
+        /* Delete Button */
+        .delete-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            font-size: 18px;
+        }
+
+        .image-container:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background-color: var(--danger);
+            transform: scale(1.1);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            margin: 24px;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .zoom-level {
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Column Controls */
+        .column-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Scrollbar Styling */
+        .board-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .board-grid::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .board-grid::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .board-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Responsive Design */
+        /* Mobile-first adjustments */
+		/* Base Media Queries for Orientation */
+		@media screen and (orientation: portrait) {
+			.container {
+				padding: 10px;
+			}
+
+			.main-actions {
+				flex-direction: column;
+				gap: 10px;
+			}
+
+			.controls-grid {
+				grid-template-columns: 1fr;
+				gap: 16px;
+			}
+
+			.vision-board {
+				width: 90vw;  /* 90% מרוחב המסך */
+				height: auto;
+				margin: 0 auto;
+			}
+
+			.vision-board.horizontal {
+				aspect-ratio: 3/2;
+			}
+
+			.vision-board.vertical {
+				aspect-ratio: 2/3;
+			}
+
+			.board-grid {
+				padding: 12px;
+				column-count: 2;  /* במצב פורטרט נראה 2 עמודות */
+			}
+
+			/* התאמת הכפתורים למצב פורטרט */
+			.button-primary {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.control-group {
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+		}
+
+		@media screen and (orientation: landscape) {
+			.container {
+				padding: 20px;
+			}
+
+			.main-actions {
+				flex-direction: row;
+				gap: 16px;
+			}
+
+			.controls-grid {
+				grid-template-columns: repeat(2, 1fr);
+				gap: 24px;
+			}
+
+			.vision-board.horizontal {
+				width: 80vw;  /* 80% מרוחב המסך */
+				aspect-ratio: 3/2;
+			}
+
+			.vision-board.vertical {
+				height: 80vh;  /* 80% מגובה המסך */
+				aspect-ratio: 2/3;
+			}
+
+			.board-grid {
+				padding: 24px;
+				column-count: 3;  /* במצב לנדסקייפ נראה 3 עמודות */
+			}
+		}
+
+		/* התאמות נוספות למכשירים קטנים במיוחד */
+		@media screen and (orientation: portrait) and (max-width: 480px) {
+			.board-grid {
+				column-count: 1;  /* במסך צר מאוד - עמודה אחת */
+			}
+
+			.control-group {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.vision-board {
+				width: 95vw;  /* במסך צר יותר - ננצל יותר מקום */
+			}
+		}
