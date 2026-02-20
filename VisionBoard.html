@@ -4,192 +4,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vision Board Creator - Dark Mode</title>
+    <title>Vision Board Creator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Base Variables */
+        /* ===== CSS Variables ===== */
         :root {
-            --background: #0f172a;
-            --surface: #1e293b;
-            --primary: #6366f1;
-            --primary-hover: #818cf8;
-            --text: #e2e8f0;
+            --bg-deep: #080b16;
+            --bg-main: #0c1023;
+            --bg-surface: #141937;
+            --bg-surface-hover: #1a2148;
+            --bg-card: #181f3a;
+            --accent-1: #6c5ce7;
+            --accent-2: #a855f7;
+            --accent-3: #818cf8;
+            --accent-glow: rgba(108, 92, 231, 0.35);
+            --accent-glow-strong: rgba(108, 92, 231, 0.6);
+            --gradient-primary: linear-gradient(135deg, #6c5ce7 0%, #a855f7 50%, #818cf8 100%);
+            --gradient-header: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
+            --gradient-warm: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-cool: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-subtle: rgba(148, 163, 184, 0.08);
+            --border-light: rgba(148, 163, 184, 0.15);
             --danger: #ef4444;
-            --danger-hover: #dc2626;
-            --border: #334155;
+            --danger-glow: rgba(239, 68, 68, 0.4);
+            --success: #22c55e;
+            --glass-bg: rgba(20, 25, 55, 0.6);
+            --glass-border: rgba(148, 163, 184, 0.1);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 40px var(--accent-glow);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 24px;
         }
 
-        /* Reset & Base Styles */
-        * {
+        /* ===== Reset & Base ===== */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--background);
-            color: var(--text);
+            font-family: 'Heebo', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Container & Layout */
-        .container {
+        /* ===== Animated Background ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(108, 92, 231, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(129, 140, 248, 0.05) 0%, transparent 50%);
+            animation: bgShift 20s ease-in-out infinite alternate;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes bgShift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-5%, -5%) rotate(3deg); }
+        }
+
+        /* ===== Container ===== */
+        .app-container {
+            position: relative;
+            z-index: 1;
             max-width: 100%;
-            margin: 0 auto;
-            padding: 20px;
+            padding: 0;
         }
 
-        /* Controls Section */
-        .controls {
-            background: var(--surface);
-            padding: 24px;
-            border-radius: 16px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border);
-        }
-
-        .controls-grid {
-            display: flex;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-
-        .control-section {
-            background: var(--background);
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .control-section-title {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
+        /* ===== Header ===== */
+        .app-header {
+            background: linear-gradient(180deg, rgba(12, 16, 35, 0.95) 0%, rgba(12, 16, 35, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 32px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .control-group {
+        .header-brand {
             display: flex;
-            gap: 12px;
             align-items: center;
-			margin-top: 10px;
+            gap: 14px;
         }
 
-		#control-display {
-			flex: 2;
-		}
-		
-        /* Main Actions */
-        .main-actions {
-            grid-column: 1 / -1;
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        /* Buttons */
-        .button-primary {
-            flex: 1;
-            padding: 16px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        .header-logo {
+            width: 42px;
+            height: 42px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            position: relative;
+            overflow: hidden;
         }
 
-        .button-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
+        .header-logo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            border-radius: inherit;
         }
 
-        .button-secondary {
-            padding: 8px 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+        .header-logo svg {
+            width: 22px;
+            height: 22px;
+            stroke: white;
+            position: relative;
+            z-index: 1;
         }
 
-        .button-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
         }
 
-        .button-secondary.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .header-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: -2px;
         }
 
-        /* Size Inputs */
-        .size-inputs {
+        /* ===== Main Actions Bar ===== */
+        .actions-bar {
+            padding: 20px 32px;
             display: flex;
             gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
-        .size-input-group {
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Primary action button */
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px var(--accent-glow-strong);
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Secondary / ghost button */
+        .btn-ghost {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-surface-hover);
+            border-color: var(--accent-3);
+            color: var(--accent-3);
+            box-shadow: 0 0 20px rgba(129, 140, 248, 0.1);
+        }
+
+        .btn-ghost.active {
+            background: rgba(108, 92, 231, 0.15);
+            border-color: var(--accent-1);
+            color: var(--accent-3);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Small button variant */
+        .btn-sm {
+            padding: 8px 14px;
+            font-size: 13px;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border-radius: var(--radius-sm);
+        }
+
+        /* ===== Toolbar ===== */
+        .toolbar {
+            padding: 0 32px 20px;
+        }
+
+        .toolbar-inner {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-md);
+        }
+
+        .toolbar-section {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .size-input {
-            width: 80px;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text);
-            text-align: center;
+        .toolbar-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
         }
 
-        .divider {
+        .toolbar-divider {
             width: 1px;
-            height: 24px;
-            background: var(--border);
-            margin: 0 8px;
+            height: 28px;
+            background: var(--border-light);
+            margin: 0 4px;
         }
 
-        /* Vision Board Layout */
+        /* ===== Custom Inputs ===== */
+        .input-number {
+            width: 72px;
+            padding: 7px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .input-number:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-picker-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: transparent;
+            padding: 2px;
+            transition: all 0.2s ease;
+        }
+
+        input[type="color"]:hover {
+            border-color: var(--accent-1);
+            transform: scale(1.1);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* ===== Zoom display ===== */
+        .zoom-display {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 44px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ===== Vision Board Area ===== */
+        .board-area {
+            padding: 0 32px 32px;
+        }
+
         .vision-board-wrapper {
             position: relative;
             width: 100%;
-            //height: calc(100vh - 300px);
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            background: var(--background);
-            border-radius: 16px;
-            margin-top: 20px;
-			padding: 20px;
+            background:
+                radial-gradient(ellipse at center, rgba(20, 25, 55, 0.5) 0%, var(--bg-deep) 70%);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--border-subtle);
+            padding: 32px;
+            min-height: 200px;
         }
 
         .vision-board {
-            background: var(--surface);
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg), 0 0 80px rgba(108, 92, 231, 0.05);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: auto;
+            position: relative;
         }
 
         .vision-board.horizontal {
@@ -202,75 +406,72 @@
             height: 1200px;
         }
 
-		/* עדכון התאמה למסך */
-		.vision-board.fit-screen {
-			transform-origin: center;
-			margin: auto;
-		}
+        .vision-board.fit-screen {
+            transform-origin: center;
+            margin: auto;
+        }
 
-        /* Grid Layout */
-		.board-grid {
-			column-count: 4; /* ברירת מחדל */
-			column-gap: 24px;
-			padding: 24px;
-			height: 100%;
-		}
+        /* ===== Board Grid ===== */
+        .board-grid {
+            column-count: 4;
+            column-gap: 20px;
+            padding: 20px;
+            height: 100%;
+        }
 
-		/* Column variations */
-		.board-grid.columns-2,
-		.board-grid[data-columns="2"] {
-			column-count: 2;
-		}
+        .board-grid.columns-2,
+        .board-grid[data-columns="2"] {
+            column-count: 2;
+        }
 
-		.board-grid.columns-3,
-		.board-grid[data-columns="3"] {
-			column-count: 3;
-		}
+        .board-grid.columns-3,
+        .board-grid[data-columns="3"] {
+            column-count: 3;
+        }
 
-		.board-grid.columns-4,
-		.board-grid[data-columns="4"] {
-			column-count: 4;
-		}
+        .board-grid.columns-4,
+        .board-grid[data-columns="4"] {
+            column-count: 4;
+        }
 
-		/* Image container styles */
-		.image-container {
-			break-inside: avoid;
-			margin-bottom: 24px;
-			position: relative;
-			border-radius: 12px;
-			overflow: hidden;
-			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-			border: 2px solid var(--border);
-			transition: transform 0.3s ease;
-		}
+        /* ===== Image Container ===== */
+        .image-container {
+            break-inside: avoid;
+            margin-bottom: 20px;
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-surface);
+        }
 
-		.image-container img {
-			width: 100%;
-			height: auto;
-			display: block;
-			border: 3px solid #000000; /* מסגרת ברירת מחדל בצבע שחור */
-			box-sizing: border-box; /* לוודא שהמסגרת לא משפיעה על גודל התמונה */
-			border-radius: 5px; /* ניתן להוסיף גם פינות מעוגלות למסגרת */
-		}
+        .image-container::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+            padding: 2px;
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
 
         .image-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            z-index: 1;
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-md), 0 0 40px var(--accent-glow);
+            z-index: 2;
         }
 
-        .image-container.wide {
-            grid-column: span 2;
-        }
-
-        .image-container.tall {
-            grid-row: span 2;
-        }
-
-        .image-wrapper {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        .image-container:hover::before {
+            opacity: 1;
         }
 
         .image-container img {
@@ -278,88 +479,83 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: filter 0.3s ease;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .image-container:hover img {
-            filter: brightness(0.9);
+            filter: brightness(0.92) contrast(1.05);
         }
 
-		.image-container::after {
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: 0; /* Change from 'right' to 'left' to position on the bottom-left */
-			width: 30px; /* Keep the size of the handle */
-			height: 30px; /* Keep the size of the handle */
-			border-left: 3px solid var(--primary); /* Change to border-left for the left side */
-			border-bottom: 3px solid var(--primary); /* Keep bottom border */
-			opacity: 0; /* Initially hidden */
-			transition: opacity 0.3s ease; /* Smooth transition */
-			cursor: sw-resize; /* Change cursor to bottom-left resize */
-			z-index: 10; /* Ensure it stays on top */
-		}
-				
-		/* Make the handle visible on hover */
-		.image-container:hover::after {
-			opacity: 1;
-		}
-		
-		/* Remove all previous resize handle visibility */
-		.resize-handle {
-			display: none; /* Hide all other handles */
-		}
+        /* Resize handle */
+        .image-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 28px;
+            height: 28px;
+            border-left: 3px solid var(--accent-2);
+            border-bottom: 3px solid var(--accent-2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: sw-resize;
+            z-index: 10;
+            border-radius: 0 0 0 4px;
+        }
 
-		/* Make the bottom-left (sw) resize handle visible */
-		.resize-handle.sw {
-			display: block;
-			position: absolute;
-			width: 15px;
-			height: 15px;
-			background-color: var(--primary);
-			border-radius: 50%;
-			bottom: 0; /* Positioned at the bottom */
-			left: 0;   /* Positioned at the left */
-			cursor: sw-resize; /* Correct cursor for bottom-left resizing */
-			opacity: 0; /* Initially hidden */
-			transition: opacity 0.3s ease;
-		}
+        .image-container:hover::after {
+            opacity: 0.7;
+        }
 
-		/* Ensure the bottom-left handle becomes visible on hover */
-		.image-container:hover .resize-handle.sw {
-			opacity: 1;
-		}
+        .resize-handle { display: none; }
 
-		/* Hide other resize handles to avoid any confusion */
-		.resize-handle.nw,
-		.resize-handle.ne,
-		.resize-handle.se,
-		.resize-handle.top,
-		.resize-handle.bottom,
-		.resize-handle.left,
-		.resize-handle.right {
-			display: none !important;
-		}
-		
-        /* Delete Button */
+        .resize-handle.sw {
+            display: block;
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--accent-2);
+            border-radius: 50%;
+            bottom: 2px;
+            left: 2px;
+            cursor: sw-resize;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 11;
+        }
+
+        .image-container:hover .resize-handle.sw {
+            opacity: 0.8;
+        }
+
+        .resize-handle.nw, .resize-handle.ne, .resize-handle.se,
+        .resize-handle.top, .resize-handle.bottom, .resize-handle.left, .resize-handle.right {
+            display: none !important;
+        }
+
+        /* ===== Delete Button ===== */
         .delete-btn {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(239, 68, 68, 0.9);
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             color: white;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 18px;
+            z-index: 5;
         }
 
         .image-container:hover .delete-btn {
@@ -367,291 +563,345 @@
         }
 
         .delete-btn:hover {
-            background-color: var(--danger);
-            transform: scale(1.1);
+            background: var(--danger);
+            border-color: var(--danger);
+            transform: scale(1.15) rotate(90deg);
+            box-shadow: 0 0 20px var(--danger-glow);
         }
 
-        /* Empty State */
+        /* ===== Empty State ===== */
         .empty-state {
             text-align: center;
-            padding: 48px;
+            padding: 80px 48px;
             color: var(--text-secondary);
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            margin: 24px;
-        }
-
-        /* Zoom Controls */
-        .zoom-controls {
             display: flex;
-            gap: 8px;
+            flex-direction: column;
             align-items: center;
+            gap: 20px;
         }
 
-        .zoom-level {
-            min-width: 60px;
-            text-align: center;
-        }
-
-        /* Column Controls */
-        .column-controls {
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(108, 92, 231, 0.1);
+            border: 2px dashed rgba(108, 92, 231, 0.3);
+            border-radius: var(--radius-xl);
             display: flex;
-            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            animation: emptyPulse 3s ease-in-out infinite;
         }
 
-        /* Scrollbar Styling */
-        .board-grid::-webkit-scrollbar {
-            width: 8px;
+        .empty-state-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: var(--accent-3);
+            opacity: 0.7;
         }
 
-        .board-grid::-webkit-scrollbar-track {
-            background: var(--surface);
+        @keyframes emptyPulse {
+            0%, 100% { transform: scale(1); border-color: rgba(108, 92, 231, 0.2); }
+            50% { transform: scale(1.05); border-color: rgba(108, 92, 231, 0.5); }
         }
 
-        .board-grid::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .board-grid::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
+        .empty-state-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 320px;
+            line-height: 1.6;
         }
-	
-		/* סגנון נוסף לכפתור החזרה לעמודות */
-		#resetToColumnsBtn {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			padding: 8px 16px;
-			cursor: pointer;
-		}
 
-		#resetToColumnsBtn svg {
-			width: 16px;
-			height: 16px;
-		}
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
 
-	
-		/* הדגשה כשהלוח במצב חופשי */
-		.board-grid.resizing ~ .controls #resetToColumnsBtn {
-			border-color: var(--primary);
-			color: var(--primary);
-		}
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-        /* Responsive Design */
-        /* Mobile-first adjustments */
-		/* Base Media Queries for Orientation */
-		@media screen and (orientation: portrait) {
-			.container {
-				padding: 10px;
-			}
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 10px;
+        }
 
-			.main-actions {
-				flex-direction: column;
-				gap: 10px;
-			}
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-1);
+        }
 
-			.controls-grid {
-				grid-template-columns: 1fr;
-				gap: 16px;
-			}
+        /* ===== Column button group ===== */
+        .col-btn-group {
+            display: flex;
+            background: var(--bg-surface);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+        }
 
-			.vision-board {
-				width: 90vw;  /* 90% מרוחב המסך */
-				height: auto;
-				margin: 0 auto;
-			}
+        .col-btn-group .btn-sm {
+            border-radius: 0;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            min-width: 36px;
+            border-left: 1px solid var(--border-subtle);
+        }
 
-			.vision-board.horizontal {
-				aspect-ratio: 3/2;
-			}
+        .col-btn-group .btn-sm:first-child {
+            border-left: none;
+        }
 
-			.vision-board.vertical {
-				aspect-ratio: 2/3;
-			}
+        .col-btn-group .btn-sm.active {
+            background: var(--accent-1);
+            color: white;
+            box-shadow: none;
+            border-color: transparent;
+        }
 
-			.board-grid {
-				padding: 12px;
-				column-count: 2;  /* במצב פורטרט נראה 2 עמודות */
-			}
+        .col-btn-group .btn-sm:hover:not(.active) {
+            background: var(--bg-surface-hover);
+            color: var(--accent-3);
+        }
 
-			/* התאמת הכפתורים למצב פורטרט */
-			.button-primary {
-				width: 100%;
-				justify-content: center;
-			}
+        /* ===== Resizing state styles ===== */
+        .board-grid.resizing {
+            display: block !important;
+        }
 
-			.control-group {
-				flex-wrap: wrap;
-				justify-content: center;
-			}
-		}
+        /* ===== Responsive ===== */
+        @media screen and (max-width: 900px) {
+            .app-header {
+                padding: 12px 16px;
+            }
+            .header-title { font-size: 18px; }
+            .actions-bar {
+                padding: 14px 16px;
+                gap: 8px;
+            }
+            .btn { padding: 10px 16px; font-size: 13px; }
+            .toolbar { padding: 0 16px 14px; }
+            .toolbar-inner {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+            .board-area { padding: 0 16px 16px; }
+            .vision-board-wrapper { padding: 16px; }
+        }
 
-		@media screen and (orientation: landscape) {
-			.container {
-				padding: 20px;
-			}
+        @media screen and (orientation: portrait) {
+            .actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn { width: 100%; justify-content: center; }
+            .toolbar-inner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .toolbar-section {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .toolbar-divider {
+                width: 100%;
+                height: 1px;
+                margin: 4px 0;
+            }
+            .vision-board {
+                width: 90vw !important;
+                height: auto !important;
+            }
+            .vision-board.horizontal { aspect-ratio: 3/2; }
+            .vision-board.vertical { aspect-ratio: 2/3; }
+            .board-grid { column-count: 2; padding: 12px; }
+        }
 
-			.main-actions {
-				flex-direction: row;
-				gap: 16px;
-			}
+        @media screen and (orientation: portrait) and (max-width: 480px) {
+            .board-grid { column-count: 1; }
+            .vision-board { width: 95vw !important; }
+        }
 
-			.controls-grid {
-				grid-template-columns: repeat(2, 1fr);
-				gap: 24px;
-			}
+        @media screen and (orientation: landscape) {
+            .vision-board.horizontal { width: 80vw; aspect-ratio: 3/2; }
+            .vision-board.vertical { height: 80vh; aspect-ratio: 2/3; }
+        }
 
-			.vision-board.horizontal {
-				width: 80vw;  /* 80% מרוחב המסך */
-				aspect-ratio: 3/2;
-			}
+        /* ===== Button ripple effect ===== */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.5s ease;
+        }
 
-			.vision-board.vertical {
-				height: 80vh;  /* 80% מגובה המסך */
-				aspect-ratio: 2/3;
-			}
-
-			.board-grid {
-				padding: 24px;
-				column-count: 4;  /* במצב לנדסקייפ נראה 3 עמודות */
-			}
-		}
-
-		/* התאמות נוספות למכשירים קטנים במיוחד */
-		@media screen and (orientation: portrait) and (max-width: 480px) {
-			.board-grid {
-				column-count: 1;  /* במסך צר מאוד - עמודה אחת */
-			}
-
-			.control-group {
-				flex-direction: column;
-				align-items: stretch;
-			}
-
-			.vision-board {
-				width: 95vw;  /* במסך צר יותר - ננצל יותר מקום */
-			}
-		}
-
+        .btn-primary:active::after {
+            opacity: 1;
+            transform: scale(2.5);
+            transition: 0s;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="controls">
-            <div class="main-actions">
-                <!-- העלאת תמונות -->
-                <input type="file" id="fileInput" accept="image/*" multiple style="display: none">
-                <button class="button-primary" onclick="document.getElementById('fileInput').click()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
+    <div class="app-container">
+        <!-- ===== Header ===== -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="header-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
                     </svg>
-                    העלאת תמונות
-                </button>
-
-                <!-- Add explicit shuffle button -->
-                <button class="button-primary" onclick="shuffleImages()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                    </svg>
-                    ערבוב תמונות
-                </button>
-
-                <!-- שמירת תמונה -->
-                <button class="button-primary" onclick="downloadBoard()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    שמור כתמונה
-                </button>
+                </div>
+                <div>
+                    <div class="header-title">Vision Board</div>
+                    <div class="header-subtitle">Creator</div>
+                </div>
             </div>
+        </header>
 
-            <div class="controls-grid">
-                <!-- הגדרות משטח -->
-                <div class="control-section">
-                    <div class="control-section-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                        </svg>
-                        הגדרות משטח
-                    </div>
-                    <div class="control-group">
-                        <div class="size-inputs">
-                            <div class="size-input-group">
-                                <span>רוחב:</span>
-                                <input type="number" id="widthInput" class="size-input" value="1200" min="400" max="2000" step="100" onchange="updateSize()">
-                            </div>
-                            <div class="size-input-group">
-                                <span>גובה:</span>
-                                <input type="number" id="heightInput" class="size-input" value="800" min="400" max="2000" step="100" onchange="updateSize()">
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <button id="horizontalBtn" class="button-secondary active" onclick="setOrientation('horizontal')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="6" width="18" height="12" rx="2" />
-                            </svg>
-                            מאוזן
-                        </button>
-                        <button id="verticalBtn" class="button-secondary" onclick="setOrientation('vertical')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="6" y="3" width="12" height="18" rx="2" />
-                            </svg>
-                            מאונך
-                        </button>
+        <!-- ===== Action Buttons ===== -->
+        <div class="actions-bar">
+            <input type="file" id="fileInput" accept="image/*" multiple style="display: none">
+            <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                העלאת תמונות
+            </button>
+            <button class="btn btn-primary" onclick="shuffleImages()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 3 21 3 21 8"/>
+                    <line x1="4" y1="20" x2="21" y2="3"/>
+                    <polyline points="21 16 21 21 16 21"/>
+                    <line x1="15" y1="15" x2="21" y2="21"/>
+                    <line x1="4" y1="4" x2="9" y2="9"/>
+                </svg>
+                ערבוב תמונות
+            </button>
+            <button class="btn btn-primary" onclick="downloadBoard()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                שמור כתמונה
+            </button>
+        </div>
+
+        <!-- ===== Toolbar ===== -->
+        <div class="toolbar">
+            <div class="toolbar-inner">
+                <!-- Board Size -->
+                <div class="toolbar-section">
+                    <span class="toolbar-label">גודל</span>
+                    <input type="number" id="widthInput" class="input-number" value="1200" min="400" max="2000" step="100" onchange="updateSize()">
+                    <span style="color: var(--text-muted); font-size: 12px;">x</span>
+                    <input type="number" id="heightInput" class="input-number" value="800" min="400" max="2000" step="100" onchange="updateSize()">
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Orientation -->
+                <div class="toolbar-section">
+                    <span class="toolbar-label">כיוון</span>
+                    <button id="horizontalBtn" class="btn btn-ghost btn-sm active" onclick="setOrientation('horizontal')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/></svg>
+                        מאוזן
+                    </button>
+                    <button id="verticalBtn" class="btn btn-ghost btn-sm" onclick="setOrientation('vertical')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="3" width="12" height="18" rx="2"/></svg>
+                        מאונך
+                    </button>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- View Controls -->
+                <div class="toolbar-section">
+                    <span class="toolbar-label">תצוגה</span>
+                    <button id="fitScreenBtn" class="btn btn-ghost btn-sm" onclick="toggleFitScreen()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        התאם למסך
+                    </button>
+                    <button id="resetToColumnsBtn" class="btn btn-ghost btn-sm active" onclick="resetToColumns()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        עמודות
+                    </button>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Zoom -->
+                <div class="toolbar-section">
+                    <span class="toolbar-label">זום</span>
+                    <button class="btn btn-ghost btn-icon btn-sm" onclick="adjustZoom(-0.1)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <span id="zoomLevel" class="zoom-display">100%</span>
+                    <button class="btn btn-ghost btn-icon btn-sm" onclick="adjustZoom(0.1)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <!-- Columns -->
+                <div class="toolbar-section">
+                    <span class="toolbar-label">עמודות</span>
+                    <div class="col-btn-group">
+                        <button id="col2" class="btn btn-sm" onclick="setColumns(2)">2</button>
+                        <button id="col3" class="btn btn-sm" onclick="setColumns(3)">3</button>
+                        <button id="col4" class="btn btn-sm active" onclick="setColumns(4)">4</button>
                     </div>
                 </div>
 
-                <!-- הגדרות תצוגה -->
-                <div id="control-display" class="control-section">
-                    <div class="control-section-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                        </svg>
-                        תצוגה
+                <div class="toolbar-divider"></div>
+
+                <!-- Colors -->
+                <div class="toolbar-section">
+                    <div class="color-picker-wrapper">
+                        <span class="color-picker-label">רקע</span>
+                        <input type="color" id="backgroundColorPicker" value="#4043B0" onchange="updateBackgroundColor()">
                     </div>
-                    <div class="control-group">
-                        <button id="fitScreenBtn" class="button-secondary" onclick="toggleFitScreen()">
-                            התאם למסך
-                        </button>
-						<div class="divider"></div>
-						<!-- כפתור חזרה לעמודות -->
-						<button id="resetToColumnsBtn" class="button-secondary active" onclick="resetToColumns()">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M4 6h16M4 12h16M4 18h16"/>
-							</svg>
-							מצב עמודות
-						</button>
-                        <div class="divider"></div>
-                        <button class="button-secondary" onclick="adjustZoom(-0.1)">-</button>
-                        <span id="zoomLevel">100%</span>
-                        <button class="button-secondary" onclick="adjustZoom(0.1)">+</button>
-                        <div class="divider"></div>
-                        <div class="column-controls">
-							<button id="col2" class="button-secondary" onclick="setColumns(2)">2</button>
-							<button id="col3" class="button-secondary" onclick="setColumns(3)">3</button>
-							<button id="col4" class="button-secondary active" onclick="setColumns(4)">4</button>
-						</div>
-						<label for="backgroundColorPicker">צבע רקע:</label>
-						<input type="color" id="backgroundColorPicker" value="#4043B0" onchange="updateBackgroundColor()">
-						<label for="borderColorPicker">צבע מסגרת:</label>
-						<input type="color" id="borderColorPicker" value="#FFFFFF" onchange="updateBorderColor()">
+                    <div class="color-picker-wrapper">
+                        <span class="color-picker-label">מסגרת</span>
+                        <input type="color" id="borderColorPicker" value="#FFFFFF" onchange="updateBorderColor()">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Vision Board Wrapper -->
-        <div class="vision-board-wrapper">
-            <div id="visionBoard" class="vision-board horizontal">
-                <div id="boardGrid" class="board-grid can-scroll">
-                    <div class="empty-state">העלה תמונות כדי להתחיל ליצור את ה-Vision Board שלך</div>
+        <!-- ===== Vision Board ===== -->
+        <div class="board-area">
+            <div class="vision-board-wrapper">
+                <div id="visionBoard" class="vision-board horizontal">
+                    <div id="boardGrid" class="board-grid can-scroll">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <polyline points="21 15 16 10 5 21"/>
+                                </svg>
+                            </div>
+                            <div class="empty-state-title">ה-Vision Board שלך ריק</div>
+                            <div class="empty-state-desc">העלה תמונות כדי להתחיל ליצור את לוח החזון שלך. גרור, שנה גודל וסדר את התמונות כרצונך.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -663,310 +913,242 @@
         let isFitScreen = false;
         let currentOrientation = 'horizontal';
         let currentColumns = 4;
-		let currentBorderColor = '#000000'; // צבע ברירת מחדל למסגרת (שחור)
+        let currentBorderColor = '#000000';
 
-        // מאזין לשינויים בקובץ
         document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 
+        function updateBorderColor() {
+            currentBorderColor = document.getElementById('borderColorPicker').value;
+            const newImages = document.querySelectorAll('.image-container img.new-image');
+            newImages.forEach(image => {
+                image.style.border = `3px solid ${currentBorderColor}`;
+                image.classList.remove('new-image');
+            });
+        }
 
-		// עדכון צבע המסגרת לפי בחירה בקלט
-		function updateBorderColor() {
-			currentBorderColor = document.getElementById('borderColorPicker').value;
-			
-			// עדכן רק תמונות חדשות עם צבע המסגרת הנבחר
-			const newImages = document.querySelectorAll('.image-container img.new-image');
-			newImages.forEach(image => {
-				image.style.border = `3px solid ${currentBorderColor}`;
-				image.classList.remove('new-image'); // הסר את המחלקה כדי לא לעדכן שוב
-			});
-		}
-		
-		// עדכון צבע המסגרת לפי בחירה בקלט
-		function updateBackgroundColor() {
-			const currentBackgroundColor = document.getElementById('backgroundColorPicker').value;
-			
-			// עדכן את צבע הרקע של boardGrid
-			const boardGrid = document.querySelector('#boardGrid');
-			boardGrid.style.backgroundColor = currentBackgroundColor;
-		}
-	
-		function saveCurrentPositions() {
-			const containers = document.querySelectorAll('.image-container');
-			containers.forEach(container => {
-				const rect = container.getBoundingClientRect();
-				const grid = document.querySelector('.board-grid');
-				const gridRect = grid.getBoundingClientRect();
-				
-				// שמירת המיקום היחסי לגריד
-				container.setAttribute('data-current-x', rect.left - gridRect.left);
-				container.setAttribute('data-current-y', rect.top - gridRect.top);
-				container.setAttribute('data-current-width', rect.width);
-				container.setAttribute('data-current-height', rect.height);
-			});
-		}
+        function updateBackgroundColor() {
+            const currentBackgroundColor = document.getElementById('backgroundColorPicker').value;
+            const boardGrid = document.querySelector('#boardGrid');
+            boardGrid.style.backgroundColor = currentBackgroundColor;
+        }
 
-		// פונקציה חדשה להחלת המיקומים השמורים
-		function applyAbsolutePositions() {
-			const containers = document.querySelectorAll('.image-container');
-			containers.forEach(container => {
-				const x = container.getAttribute('data-current-x');
-				const y = container.getAttribute('data-current-y');
-				const width = container.getAttribute('data-current-width');
-				const height = container.getAttribute('data-current-height');
-				
-				container.style.position = 'absolute';
-				container.style.left = x + 'px';
-				container.style.top = y + 'px';
-				container.style.width = width + 'px';
-				container.style.height = height + 'px';
-			});
-		}
+        function saveCurrentPositions() {
+            const containers = document.querySelectorAll('.image-container');
+            containers.forEach(container => {
+                const rect = container.getBoundingClientRect();
+                const grid = document.querySelector('.board-grid');
+                const gridRect = grid.getBoundingClientRect();
+                container.setAttribute('data-current-x', rect.left - gridRect.left);
+                container.setAttribute('data-current-y', rect.top - gridRect.top);
+                container.setAttribute('data-current-width', rect.width);
+                container.setAttribute('data-current-height', rect.height);
+            });
+        }
 
-		// פונקציה חדשה לחזרה למצב עמודות
-		function resetToColumns() {
-			const containers = document.querySelectorAll('.image-container');
-			containers.forEach(container => {
-				container.style.position = '';
-				container.style.left = '';
-				container.style.top = '';
-				container.style.transform = '';
-				container.style.width = '';
-				container.style.height = '';
-				
-				// ניקוי המידע השמור
-				container.removeAttribute('data-current-x');
-				container.removeAttribute('data-current-y');
-				container.removeAttribute('data-current-width');
-				container.removeAttribute('data-current-height');
-			});
-			
-			
-			setColumns(4);
-			document.getElementById('resetToColumnsBtn').classList.add('active');
-			document.getElementById('boardGrid').classList.remove('resize');
-		}
+        function applyAbsolutePositions() {
+            const containers = document.querySelectorAll('.image-container');
+            containers.forEach(container => {
+                const x = container.getAttribute('data-current-x');
+                const y = container.getAttribute('data-current-y');
+                const width = container.getAttribute('data-current-width');
+                const height = container.getAttribute('data-current-height');
+                container.style.position = 'absolute';
+                container.style.left = x + 'px';
+                container.style.top = y + 'px';
+                container.style.width = width + 'px';
+                container.style.height = height + 'px';
+            });
+        }
 
-        // טיפול בהעלאת תמונות
+        function resetToColumns() {
+            const containers = document.querySelectorAll('.image-container');
+            containers.forEach(container => {
+                container.style.position = '';
+                container.style.left = '';
+                container.style.top = '';
+                container.style.transform = '';
+                container.style.width = '';
+                container.style.height = '';
+                container.removeAttribute('data-current-x');
+                container.removeAttribute('data-current-y');
+                container.removeAttribute('data-current-width');
+                container.removeAttribute('data-current-height');
+            });
+            setColumns(4);
+            document.getElementById('resetToColumnsBtn').classList.add('active');
+            document.getElementById('boardGrid').classList.remove('resize');
+        }
+
         function handleFileSelect(event) {
-			const files = Array.from(event.target.files);
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            images.push({
+                                src: e.target.result,
+                                width: this.width,
+                                height: this.height,
+                                ratio: this.width / this.height,
+                                borderColor: currentBorderColor
+                            });
+                            updateBoard();
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
 
-			files.forEach(file => {
-				if (file.type.startsWith('image/')) {
-					const reader = new FileReader();
+        function updateSize() {
+            const widthInput = document.getElementById('widthInput');
+            const heightInput = document.getElementById('heightInput');
+            const board = document.getElementById('visionBoard');
+            const width = parseInt(widthInput.value, 10);
+            const height = parseInt(heightInput.value, 10);
+            board.style.width = `${width}px`;
+            board.style.height = `${height}px`;
+            if (isFitScreen) {
+                setTimeout(fitToScreen, 100);
+            }
+            updateBoard();
+        }
 
-					reader.onload = function(e) {
-						const img = new Image();
-						img.onload = function() {
-							images.push({
-								src: e.target.result,
-								width: this.width,
-								height: this.height,
-								ratio: this.width / this.height,
-								borderColor: currentBorderColor // שמירה של צבע המסגרת הנוכחי
-							});
-							updateBoard();
-						};
-						img.src = e.target.result;
-					};
+        function setColumns(num) {
+            document.querySelectorAll('.col-btn-group button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`col${num}`).classList.add('active');
+            const grid = document.getElementById('boardGrid');
+            grid.classList.remove('columns-2', 'columns-3', 'columns-4');
+            grid.classList.add(`columns-${num}`);
+            grid.setAttribute('data-columns', num);
+            updateBoard();
+        }
 
-					reader.readAsDataURL(file);
-				}
-			});
-		}
-
-		function updateSize() {
-			const widthInput = document.getElementById('widthInput');
-			const heightInput = document.getElementById('heightInput');
-			const board = document.getElementById('visionBoard');
-
-			// Update the width and height of the vision board
-			const width = parseInt(widthInput.value, 10);
-			const height = parseInt(heightInput.value, 10);
-
-			board.style.width = `${width}px`;
-			board.style.height = `${height}px`;
-
-			// Update the display if 'fit to screen' mode is active
-			if (isFitScreen) {
-				setTimeout(fitToScreen, 100);
-			}
-
-			// Adjust image display after resizing
-			updateBoard();
-		}
-
-       // עדכון פונקציית setColumns
-		function setColumns(num) {
-			// עדכון כפתורים
-			document.querySelectorAll('.column-controls button').forEach(btn => {
-				btn.classList.remove('active');
-			});
-			document.getElementById(`col${num}`).classList.add('active');
-			
-			// עדכון הגריד
-			const grid = document.getElementById('boardGrid');
-			
-			// הסרת כל ה-classes הקודמים של העמודות
-			grid.classList.remove('columns-2', 'columns-3', 'columns-4');
-			
-			// הוספת ה-class החדש
-			grid.classList.add(`columns-${num}`);
-			
-			// אם אתה משתמש ב-data attributes, הוסף גם אותם
-			grid.setAttribute('data-columns', num);
-			
-			// עדכון התצוגה
-			updateBoard();
-		}
-
-        // החלפת כיוון
         function setOrientation(orientation) {
-			// עדכון כפתורים
-			document.querySelectorAll('#horizontalBtn, #verticalBtn').forEach(btn => {
-				btn.classList.remove('active');
-			});
-			document.getElementById(`${orientation}Btn`).classList.add('active');
-			
-			const board = document.getElementById('visionBoard');
-			board.className = `vision-board ${orientation}`;
-			
-			// עדכון שדות הקלט
-			const widthInput = document.getElementById('widthInput');
-			const heightInput = document.getElementById('heightInput');
-			
-			if (orientation === 'horizontal') {
-				widthInput.value = '1200';
-				heightInput.value = '800';
-				board.style.width = '1200px';
-				board.style.height = '800px';
-			} else { // vertical
-				widthInput.value = '800';
-				heightInput.value = '1200';
-				board.style.width = '800px';
-				board.style.height = '1200px';
-			}
-			
-			// אם במצב התאמה למסך, עדכן את הסקיילינג
-			if (isFitScreen) {
-				setTimeout(fitToScreen, 100);
-			}
-			
-			// עדכון תצוגת התמונות
-			updateBoard();
-		}
+            document.querySelectorAll('#horizontalBtn, #verticalBtn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`${orientation}Btn`).classList.add('active');
+            const board = document.getElementById('visionBoard');
+            board.className = `vision-board ${orientation}`;
+            const widthInput = document.getElementById('widthInput');
+            const heightInput = document.getElementById('heightInput');
+            if (orientation === 'horizontal') {
+                widthInput.value = '1200';
+                heightInput.value = '800';
+                board.style.width = '1200px';
+                board.style.height = '800px';
+            } else {
+                widthInput.value = '800';
+                heightInput.value = '1200';
+                board.style.width = '800px';
+                board.style.height = '1200px';
+            }
+            if (isFitScreen) {
+                setTimeout(fitToScreen, 100);
+            }
+            updateBoard();
+        }
 
-        // ערבוב תמונות
         function shuffleImages() {
-            // יצירת עותק של המערך
             const shuffled = [...images];
-
-            // Fisher-Yates shuffle algorithm
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
-
             images = shuffled;
             updateBoard();
         }
 
-        // עדכון הלוח
-        // עדכון פונקציית updateBoard
-		function updateBoard() {
-			const grid = document.getElementById('boardGrid');
-			grid.innerHTML = '';
-			
-			updateBackgroundColor();
-			updateBorderColor();
-			
-			if (images.length === 0) {
-				grid.innerHTML = '<div class="empty-state">העלה תמונות כדי להתחיל ליצור את ה-Vision Board שלך</div>';
-				return;
-			}
-			
-			images.forEach((image, index) => {
-				const container = document.createElement('div');
-				container.className = 'image-container';
-				
-				const img = document.createElement('img');
-				img.src = image.src;
-				img.style.border = `5px solid ${image.borderColor}`; // החלת צבע המסגרת השמור
-				
-				const deleteBtn = document.createElement('button');
-				deleteBtn.className = 'delete-btn';
-				deleteBtn.innerHTML = '×';
-				deleteBtn.onclick = (e) => {
-					e.stopPropagation();
-					deleteImage(index);
-				};
-				
-				container.appendChild(img);
-				container.appendChild(deleteBtn);
-				grid.appendChild(container);
-			});
-			
-			if (isFitScreen) {
-				setTimeout(fitToScreen, 100);
-			}
-			
-			
-		}
+        function updateBoard() {
+            const grid = document.getElementById('boardGrid');
+            grid.innerHTML = '';
+            updateBackgroundColor();
+            updateBorderColor();
+            if (images.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                        <div class="empty-state-title">ה-Vision Board שלך ריק</div>
+                        <div class="empty-state-desc">העלה תמונות כדי להתחיל ליצור את לוח החזון שלך. גרור, שנה גודל וסדר את התמונות כרצונך.</div>
+                    </div>`;
+                return;
+            }
+            images.forEach((image, index) => {
+                const container = document.createElement('div');
+                container.className = 'image-container';
+                const img = document.createElement('img');
+                img.src = image.src;
+                img.style.border = `5px solid ${image.borderColor}`;
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.innerHTML = '&times;';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteImage(index);
+                };
+                container.appendChild(img);
+                container.appendChild(deleteBtn);
+                grid.appendChild(container);
+            });
+            if (isFitScreen) {
+                setTimeout(fitToScreen, 100);
+            }
+        }
 
-        // מחיקת תמונה
         function deleteImage(index) {
             images.splice(index, 1);
             updateBoard();
         }
 
-		
-        // התאמה למסך
         function fitToScreen() {
-			const wrapper = document.querySelector('.vision-board-wrapper');
-			const board = document.getElementById('visionBoard');
-			
-			const padding = 40; // רווח ביטחון
-			const wrapperWidth = wrapper.clientWidth - padding;
-			const wrapperHeight = wrapper.clientHeight - padding;
-			
-			const boardWidth = board.scrollWidth;
-			const boardHeight = board.scrollHeight;
-			
-			// חישוב יחס הקטנה/הגדלה
-			const scaleX = wrapperWidth / boardWidth;
-			const scaleY = wrapperHeight / boardHeight;
-			const scale = Math.min(scaleX, scaleY, 1); // לא להגדיל מעבר לגודל המקורי
-			
-			currentZoom = scale;
-			board.style.transform = `scale(${scale})`;
-			updateZoomLevel();
-		}
-		
-		function toggleFitScreen() {
-			isFitScreen = !isFitScreen;
-			const btn = document.getElementById('fitScreenBtn');
-			const board = document.getElementById('visionBoard');
-			const grid = document.getElementById('boardGrid');
-			
-			if (isFitScreen) {
-				btn.classList.add('active');
-				board.classList.add('fit-screen');
-				board.classList.add('fit-screen');
-				fitToScreen();
-			} else {
-				btn.classList.remove('active');
+            const wrapper = document.querySelector('.vision-board-wrapper');
+            const board = document.getElementById('visionBoard');
+            const padding = 40;
+            const wrapperWidth = wrapper.clientWidth - padding;
+            const wrapperHeight = wrapper.clientHeight - padding;
+            const boardWidth = board.scrollWidth;
+            const boardHeight = board.scrollHeight;
+            const scaleX = wrapperWidth / boardWidth;
+            const scaleY = wrapperHeight / boardHeight;
+            const scale = Math.min(scaleX, scaleY, 1);
+            currentZoom = scale;
+            board.style.transform = `scale(${scale})`;
+            updateZoomLevel();
+        }
+
+        function toggleFitScreen() {
+            isFitScreen = !isFitScreen;
+            const btn = document.getElementById('fitScreenBtn');
+            const board = document.getElementById('visionBoard');
+            const grid = document.getElementById('boardGrid');
+            if (isFitScreen) {
+                btn.classList.add('active');
+                board.classList.add('fit-screen');
+                fitToScreen();
+            } else {
+                btn.classList.remove('active');
                 grid.classList.add('can-scroll');
                 board.classList.remove('fit-screen');
                 board.style.transform = 'none';
                 currentZoom = 1;
-				updateZoomLevel();
-			}
-		}
+                updateZoomLevel();
+            }
+        }
 
-
-        // עדכון זום
         function adjustZoom(delta) {
             if (isFitScreen) return;
-
             currentZoom = Math.max(0.1, Math.min(2, currentZoom + delta));
             const board = document.getElementById('visionBoard');
             board.style.transform = `scale(${currentZoom})`;
@@ -976,190 +1158,133 @@
         function updateZoomLevel() {
             document.getElementById('zoomLevel').textContent = `${Math.round(currentZoom * 100)}%`;
         }
-		
-		function downloadBoard() {
-			// מציג אינדיקציה שהשמירה בתהליך
-			//const saveButton = document.querySelector('.save-image-btn');
-			//const originalText = saveButton.innerHTML;
-			//saveButton.innerHTML = 'שומר...';
-			//saveButton.disabled = true;
 
-			// מקבל את אלמנט הלוח
-			const boardGrid = document.querySelector('#boardGrid');
-			
-			// הגדרות מתקדמות ל-html2canvas
-			const options = {
-				scale: 2, // איכות גבוהה יותר
-				useCORS: true, // תמיכה בתמונות מדומיינים חיצוניים
-				allowTaint: true,
-				backgroundColor: getComputedStyle(boardGrid).backgroundColor,
-				logging: false,
-				windowWidth: boardGrid.scrollWidth,
-				windowHeight: boardGrid.scrollHeight,
-				// שומר על הגדרות הגודל המקוריות של הלוח
-				width: boardGrid.offsetWidth,
-				height: boardGrid.offsetHeight,
-				// מונע שבירת תוכן
-				scrollX: 0,
-				scrollY: 0
-			};
+        function downloadBoard() {
+            const boardGrid = document.querySelector('#boardGrid');
+            const options = {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: getComputedStyle(boardGrid).backgroundColor,
+                logging: false,
+                windowWidth: boardGrid.scrollWidth,
+                windowHeight: boardGrid.scrollHeight,
+                width: boardGrid.offsetWidth,
+                height: boardGrid.offsetHeight,
+                scrollX: 0,
+                scrollY: 0
+            };
+            html2canvas(boardGrid, options).then(canvas => {
+                try {
+                    const image = canvas.toDataURL('image/png', 1.0);
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = image;
+                    downloadLink.download = 'vision-board.png';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                } catch (error) {
+                    console.error('Error saving board:', error);
+                    alert('אירעה שגיאה בשמירת הלוח. אנא נסה שנית.');
+                }
+            }).catch(error => {
+                console.error('Error creating image:', error);
+                alert('אירעה שגיאה ביצירת התמונה. אנא נסה שנית.');
+            });
+        }
 
-			// יצירת התמונה
-			html2canvas(boardGrid, options).then(canvas => {
-				try {
-					// יצירת תמונה באיכות מקסימלית
-					const image = canvas.toDataURL('image/png', 1.0);
-					
-					// יצירת אלמנט הורדה
-					const downloadLink = document.createElement('a');
-					downloadLink.href = image;
-					downloadLink.download = 'vision-board.png';
-					
-					// הורדה אוטומטית
-					document.body.appendChild(downloadLink);
-					downloadLink.click();
-					document.body.removeChild(downloadLink);
-					
-					// החזרת הכפתור למצב הרגיל
-					//saveButton.innerHTML = originalText;
-					//saveButton.disabled = false;
-				} catch (error) {
-					console.error('שגיאה בשמירת הלוח:', error);
-					alert('אירעה שגיאה בשמירת הלוח. אנא נסה שנית.');
-					saveButton.innerHTML = originalText;
-					saveButton.disabled = false;
-				}
-			}).catch(error => {
-				console.error('שגיאה ביצירת התמונה:', error);
-				alert('אירעה שגיאה ביצירת התמונה. אנא נסה שנית.');
-				saveButton.innerHTML = originalText;
-				saveButton.disabled = false;
-			});
-		}
-			
-        // אתחול
         document.addEventListener('DOMContentLoaded', () => {
             setColumns(4);
             setOrientation('horizontal');
-			initializeInteractions();
+            initializeInteractions();
         });
-		
-		// הוספת האזנה לשינויי גודל חלון
-		window.addEventListener('resize', () => {
-			if (isFitScreen) {
-				fitToScreen();
-			}
-		});
 
-		let highestZIndex = 1000; // משתנה גלובלי לזיהוי ה-z-index הגבוה ביותר
+        window.addEventListener('resize', () => {
+            if (isFitScreen) {
+                fitToScreen();
+            }
+        });
 
-		function initializeInteractions() {
-			interact('.image-container')
-				.draggable({
-					inertia: true,
-					modifiers: [
-						interact.modifiers.restrict({
-							restriction: '.board-grid',
-							elementRect: {
-								top: 0,
-								left: 0,
-								bottom: 1,
-								right: 1
-							}
-						})
-					],
-					listeners: {
-						start(event) {
-								const grid = document.querySelector('.board-grid');
-								document.querySelectorAll('.column-controls button').forEach(btn => {
-									btn.classList.remove('active');
-								});
-								document.getElementById('resetToColumnsBtn').classList.remove('active');
+        let highestZIndex = 1000;
 
-								if (!grid.classList.contains('resizing')) {
-									saveCurrentPositions();
-									grid.classList.add('resizing');
-									//applyAbsolutePositions();
-								}
-								
-							const target = event.target;
-							
-							// עדכון ה-z-index לגבוה ביותר בעת כל התחלת גרירה
-							highestZIndex++;
-							target.setAttribute('data-z-index', highestZIndex);
-							target.style.zIndex = highestZIndex;
-						},
-						move(event) {
-							const target = event.target;
-							const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-							const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-							target.style.transform = `translate(${x}px, ${y}px)`;
-							target.setAttribute('data-x', x);
-							target.setAttribute('data-y', y);
-						}
-					}
-				})
-				.resizable({
-					edges: { left: true, bottom: true },
-					listeners: {
-						start(event) {
-							const target = event.target;
-							
-							const grid = document.querySelector('.board-grid');
-								document.querySelectorAll('.column-controls button').forEach(btn => {
-									btn.classList.remove('active');
-								});
-								document.getElementById('resetToColumnsBtn').classList.remove('active');
-
-								if (!grid.classList.contains('resizing')) {
-									saveCurrentPositions();
-									grid.classList.add('resizing');
-									//applyAbsolutePositions();
-								}
-								
-
-							// שמור על יחס הרוחב/גובה המקורי
-							const aspectRatio = target.offsetWidth / target.offsetHeight;
-							target.setAttribute('data-aspect-ratio', aspectRatio);
-
-							// אם אין z-index שמור, עדכן אותו
-							if (!target.getAttribute('data-z-index')) {
-								highestZIndex++;
-								target.setAttribute('data-z-index', highestZIndex);
-							}
-
-							// תמיד להשתמש ב-z-index הגבוה ביותר מהתכונה
-							target.style.zIndex = target.getAttribute('data-z-index');
-						},
-						move(event) {
-							const target = event.target;
-
-							// קבל את יחס הרוחב/גובה המקורי
-							const aspectRatio = parseFloat(target.getAttribute('data-aspect-ratio'));
-
-							// שמור על יחס הרוחב/גובה
-							const newWidth = event.rect.width;
-							const newHeight = newWidth / aspectRatio;  // מחשבים את הגובה בהתאם ליחס
-
-							// שמור על מיקום ה-X המקורי
-							const x = parseFloat(target.getAttribute('data-x')) || 0;
-							const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.deltaRect.top;
-
-							Object.assign(target.style, {
-								width: `${newWidth}px`,
-								height: `${newHeight}px`,
-								transform: `translate(${x}px, ${y}px)`
-							});
-
-							target.setAttribute('data-x', x);
-							target.setAttribute('data-y', y);
-						}
-					}
-				});
-		}
-	</script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+        function initializeInteractions() {
+            interact('.image-container')
+                .draggable({
+                    inertia: true,
+                    modifiers: [
+                        interact.modifiers.restrict({
+                            restriction: '.board-grid',
+                            elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+                        })
+                    ],
+                    listeners: {
+                        start(event) {
+                            const grid = document.querySelector('.board-grid');
+                            document.querySelectorAll('.col-btn-group button').forEach(btn => {
+                                btn.classList.remove('active');
+                            });
+                            document.getElementById('resetToColumnsBtn').classList.remove('active');
+                            if (!grid.classList.contains('resizing')) {
+                                saveCurrentPositions();
+                                grid.classList.add('resizing');
+                            }
+                            const target = event.target;
+                            highestZIndex++;
+                            target.setAttribute('data-z-index', highestZIndex);
+                            target.style.zIndex = highestZIndex;
+                        },
+                        move(event) {
+                            const target = event.target;
+                            const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                            target.style.transform = `translate(${x}px, ${y}px)`;
+                            target.setAttribute('data-x', x);
+                            target.setAttribute('data-y', y);
+                        }
+                    }
+                })
+                .resizable({
+                    edges: { left: true, bottom: true },
+                    listeners: {
+                        start(event) {
+                            const target = event.target;
+                            const grid = document.querySelector('.board-grid');
+                            document.querySelectorAll('.col-btn-group button').forEach(btn => {
+                                btn.classList.remove('active');
+                            });
+                            document.getElementById('resetToColumnsBtn').classList.remove('active');
+                            if (!grid.classList.contains('resizing')) {
+                                saveCurrentPositions();
+                                grid.classList.add('resizing');
+                            }
+                            const aspectRatio = target.offsetWidth / target.offsetHeight;
+                            target.setAttribute('data-aspect-ratio', aspectRatio);
+                            if (!target.getAttribute('data-z-index')) {
+                                highestZIndex++;
+                                target.setAttribute('data-z-index', highestZIndex);
+                            }
+                            target.style.zIndex = target.getAttribute('data-z-index');
+                        },
+                        move(event) {
+                            const target = event.target;
+                            const aspectRatio = parseFloat(target.getAttribute('data-aspect-ratio'));
+                            const newWidth = event.rect.width;
+                            const newHeight = newWidth / aspectRatio;
+                            const x = parseFloat(target.getAttribute('data-x')) || 0;
+                            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.deltaRect.top;
+                            Object.assign(target.style, {
+                                width: `${newWidth}px`,
+                                height: `${newHeight}px`,
+                                transform: `translate(${x}px, ${y}px)`
+                            });
+                            target.setAttribute('data-x', x);
+                            target.setAttribute('data-y', y);
+                        }
+                    }
+                });
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 </body>
 </html>
